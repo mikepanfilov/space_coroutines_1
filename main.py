@@ -62,12 +62,16 @@ async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0
         column += columns_speed
 
 
-async def animate_spaceship(canvas, row, column, frames, ship_speed=10):
+async def animate_spaceship(canvas, row, column, frames, ship_speed=1):
 
-    frames_cycle = itertools.cycle(frames)
+
     max_y, max_x = canvas.getmaxyx()
 
-    while True:
+    dubleframes = [frame for frame in frames for _ in range(2)]
+
+    frames_cycle = itertools.cycle(dubleframes)
+
+    for current_frame in frames_cycle:
 
         # управление
         rows_direction, columns_direction, space_pressed = read_controls(canvas)
@@ -75,9 +79,6 @@ async def animate_spaceship(canvas, row, column, frames, ship_speed=10):
 
         row += rows_direction * ship_speed
         column += columns_direction * ship_speed
-
-
-        current_frame = next(frames_cycle)
 
         # получили размер рамки
         frame_rows, frame_cols = get_frame_size(current_frame)
@@ -90,9 +91,8 @@ async def animate_spaceship(canvas, row, column, frames, ship_speed=10):
         # рисуем кадр
         draw_frame(canvas, row, column, current_frame)
 
-        # 2 тика sleep на кадр
-        for _ in range(2):
-            await asyncio.sleep(0)
+        # ожидаем 1 такт чтобы читать управление максимально часто
+        await asyncio.sleep(0)
 
         # стираем
         draw_frame(canvas, row, column, current_frame, negative=True)
