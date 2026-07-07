@@ -9,6 +9,11 @@ from curses_tools import draw_frame, read_controls, get_frame_size
 TIC_TIMEOUT = 0.1
 
 async def blink(canvas, row, column, symbol='*'):
+
+    random_delay = random.randint(0, 30)
+    for _ in range(random_delay):
+        await asyncio.sleep(0)
+
     while True:
         canvas.addstr(row, column, symbol, curses.A_DIM)
         for _ in range(20):
@@ -128,8 +133,6 @@ def draw(canvas):
 
             # если уже занято другой звездой
             if (rand_y, rand_x) not in occupied:
-                # # если рандом попал в центральную часть
-                # if not (rand_y in clean_y_range and rand_x in clean_x_range):
                 break
 
         occupied.add((rand_y, rand_x))
@@ -137,10 +140,6 @@ def draw(canvas):
         rand_symbol = random.choice(['+', '*', '.', ':'])
 
         star = blink(canvas, rand_y, rand_x, symbol=rand_symbol)
-
-        start_delay = random.randint(0, 30)
-        for _ in range(start_delay):
-            star.send(None)
 
         coroutines.append(star)
 
