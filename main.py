@@ -27,6 +27,16 @@ async def blink(canvas, row, column, symbol='*'):
             await asyncio.sleep(0)
 
 
+async def move_star(canvas, row, column, symbol, speed=0.1):
+    max_y, _ = canvas.getmaxyx()
+
+    while True:
+        canvas.addstr(int(row), column, symbol)
+        await asyncio.sleep(0)
+        canvas.addstr(int(row), column, ' ')
+        row = (row + speed) % (max_y - 1)
+
+
 async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0):
     """Display animation of gun shot, direction and speed can be specified."""
 
@@ -136,7 +146,8 @@ def draw(canvas):
 
         rand_symbol = random.choice(['+', '*', '.', ':'])
 
-        star = blink(canvas, rand_y, rand_x, symbol=rand_symbol)
+        # star = blink(canvas, rand_y, rand_x, symbol=rand_symbol)
+        star = move_star(canvas, rand_y, rand_x, symbol=rand_symbol)
 
         start_delay = random.randint(0, 30)
         for _ in range(start_delay):
